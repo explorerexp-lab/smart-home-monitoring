@@ -1,0 +1,183 @@
+import {
+  Room,
+  CCTVFeed,
+  Alert,
+  generateSensorData,
+} from "@/lib/utils";
+
+// ─── Rooms ───────────────────────────────────────────────────────────────────
+
+export const rooms: Room[] = [
+  {
+    id: "living-room",
+    name: "Living Room",
+    icon: "Sofa",
+    sensors: generateSensorData(),
+    lightsOn: true,
+    thermostatTarget: 22,
+    locked: false,
+  },
+  {
+    id: "bedroom",
+    name: "Bedroom",
+    icon: "Bed",
+    sensors: generateSensorData(),
+    lightsOn: false,
+    thermostatTarget: 20,
+    locked: true,
+  },
+  {
+    id: "kitchen",
+    name: "Kitchen",
+    icon: "CookingPot",
+    sensors: generateSensorData(),
+    lightsOn: true,
+    thermostatTarget: 21,
+    locked: false,
+  },
+  {
+    id: "garage",
+    name: "Garage",
+    icon: "Car",
+    sensors: generateSensorData(),
+    lightsOn: false,
+    thermostatTarget: 18,
+    locked: true,
+  },
+  {
+    id: "garden",
+    name: "Garden",
+    icon: "TreePine",
+    sensors: generateSensorData(),
+    lightsOn: true,
+    thermostatTarget: 25,
+    locked: false,
+  },
+  {
+    id: "office",
+    name: "Office",
+    icon: "Monitor",
+    sensors: generateSensorData(),
+    lightsOn: true,
+    thermostatTarget: 23,
+    locked: true,
+  },
+];
+
+// ─── CCTV Feeds ──────────────────────────────────────────────────────────────
+
+export const cctvFeeds: CCTVFeed[] = [
+  {
+    id: "cam-front-door",
+    name: "Front Door",
+    location: "Main Entrance",
+    status: "online",
+    motionDetected: true,
+    lastMotion: new Date(Date.now() - 2 * 60 * 1000),
+    resolution: "1080p",
+  },
+  {
+    id: "cam-backyard",
+    name: "Backyard",
+    location: "Rear Garden",
+    status: "online",
+    motionDetected: false,
+    lastMotion: new Date(Date.now() - 45 * 60 * 1000),
+    resolution: "1080p",
+  },
+  {
+    id: "cam-garage",
+    name: "Garage",
+    location: "Garage Interior",
+    status: "offline",
+    motionDetected: false,
+    lastMotion: null,
+    resolution: "720p",
+  },
+  {
+    id: "cam-living-room",
+    name: "Living Room",
+    location: "Main Hall",
+    status: "online",
+    motionDetected: true,
+    lastMotion: new Date(Date.now() - 5 * 60 * 1000),
+    resolution: "4K",
+  },
+];
+
+// ─── Alerts ──────────────────────────────────────────────────────────────────
+
+export const alerts: Alert[] = [
+  {
+    id: "alert-1",
+    type: "motion",
+    severity: "medium",
+    message: "Motion detected at front door",
+    room: "Front Door",
+    timestamp: new Date(Date.now() - 2 * 60 * 1000),
+    read: false,
+  },
+  {
+    id: "alert-2",
+    type: "temperature",
+    severity: "high",
+    message: "Kitchen temperature exceeded 32°C",
+    room: "Kitchen",
+    timestamp: new Date(Date.now() - 15 * 60 * 1000),
+    read: false,
+  },
+  {
+    id: "alert-3",
+    type: "smoke",
+    severity: "critical",
+    message: "Smoke detected in garage",
+    room: "Garage",
+    timestamp: new Date(Date.now() - 30 * 60 * 1000),
+    read: true,
+  },
+  {
+    id: "alert-4",
+    type: "intrusion",
+    severity: "critical",
+    message: "Unauthorized entry attempt at back gate",
+    room: "Garden",
+    timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000),
+    read: true,
+  },
+  {
+    id: "alert-5",
+    type: "temperature",
+    severity: "low",
+    message: "Bedroom temperature dropped below 18°C",
+    room: "Bedroom",
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    read: true,
+  },
+  {
+    id: "alert-6",
+    type: "motion",
+    severity: "low",
+    message: "Motion detected in living room",
+    room: "Living Room",
+    timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    read: true,
+  },
+  {
+    id: "alert-7",
+    type: "smoke",
+    severity: "high",
+    message: "Elevated CO levels in kitchen",
+    room: "Kitchen",
+    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
+    read: true,
+  },
+  {
+    id: "alert-8",
+    type: "intrusion",
+    severity: "medium",
+    message: "Window sensor triggered in office",
+    room: "Office",
+    timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
+    read: true,
+  },
+];
