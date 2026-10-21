@@ -8,6 +8,9 @@ import {
   Car,
   TreePine,
   Monitor,
+  Camera,
+  ArrowRight,
+  ShieldAlert,
 } from 'lucide-react';
 import Header from '@/components/Header';
 import StatusOverview from '@/components/StatusOverview';
@@ -44,10 +47,9 @@ type DashboardTab = 'overview' | 'cctv' | 'controls';
 export default function DashboardPage() {
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
   const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
-  const [cctvFeeds] = useState<CCTVFeed[]>(initialCCTVFeeds);
-  const [historicalData, setHistoricalData] = useState<HistoricalDataPoint[]>(
-    []
-  );
+  const [cctvFeeds, setCctvFeeds] = useState<CCTVFeed[]>(initialCCTVFeeds);
+  const [cctvFilter, setCctvFilter] = useState<string>('all');
+  const [historicalData, setHistoricalData] = useState<HistoricalDataPoint[]>([]);
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
 
   // Generate historical data on mount
@@ -103,6 +105,38 @@ export default function DashboardPage() {
     setAlerts((prev) => prev.filter((a) => a.id !== alertId));
   }, []);
 
+  const handleToggleCCTVStatus = useCallback((feedId: string) => {
+    setCctvFeeds((prev) =>
+      prev.map((feed) =>
+        feed.id === feedId
+          ? {
+              ...feed,
+              status: feed.status === 'online' ? 'offline' : 'online',
+            }
+          : feed
+      )
+    );
+  }, []);
+
+  const handleUpdateCCTVStream = useCallback(
+    (feedId: string, newUrl: string, presetName?: string) => {
+      setCctvFeeds((prev) =>
+        prev.map((feed) =>
+          feed.id === feedId
+            ? {
+                ...feed,
+                streamUrl: newUrl,
+                description: presetName
+                  ? `${presetName} (Active)`
+                  : feed.description,
+              }
+            : feed
+        )
+      );
+    },
+    []
+  );
+
   // ─── Derived Data ────────────────────────────────────────────────────────
 
   const onlineCameras = cctvFeeds.filter((f) => f.status === 'online').length;
@@ -116,6 +150,18 @@ export default function DashboardPage() {
           ).toFixed(1)
         )
       : 0;
+
+  // Filtered CCTV feeds
+  const displayedCctvFeeds =
+    cctvFilter === 'all'
+      ? cctvFeeds
+      : cctvFeeds.filter(
+          (feed) => feed.name.toLowerCase() === cctvFilter.toLowerCase()
+        );
+
+  // Primary live camera for overview spotlight (default to Kitchen)
+  const spotlightFeed =
+    cctvFeeds.find((f) => f.name.toLowerCase() === 'kitchen') || cctvFeeds[0];
 
   // ─── Tab Buttons ─────────────────────────────────────────────────────────
 
@@ -154,6 +200,11 @@ export default function DashboardPage() {
             >
               <span className="mr-2">{tab.emoji}</span>
               {tab.label}
+              {tab.key === 'cctv' && (
+                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-mono bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                  {onlineCameras} LIVE
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -161,35 +212,93 @@ export default function DashboardPage() {
         {/* ─── Overview Tab ──────────────────────────────────────────────── */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            {/* Sensor Cards Grid */}
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-4">
-                🏠 Room Sensors
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {rooms.map((room) => (
-                  <SensorCard
-                    key={room.id}
-                    room={room.name}
-                    icon={roomIcons[room.icon] || roomIcons['Monitor']}
-                    temperature={room.sensors.temperature}
-                    humidity={room.sensors.humidity}
-                    light={room.sensors.light}
-                    motion={room.sensors.motion}
-                    lightsOn={room.lightsOn}
-                    locked={room.locked}
-                    thermostatTarget={room.thermostatTarget}
-                    onToggleLight={() => handleToggleLight(room.id)}
-                    onToggleLock={() => handleToggleLock(room.id)}
+            {/* Spotlight: Real-time CCTV Stream & Room Sensors Combined */}
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              {/* Live Spotlight Feed (Kitchen / Primary Cam) */}
+              <div className="lg:col-span-1 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-emerald-400" />
+                    <span>Real-Time CCTV Spotlight</span>
+                  </h2>
+                  <button
+                    onClick={() => setActiveTab('cctv')}
+                    className="text-xs font-mono text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+                  >
+                    All Feeds ({cctvFeeds.length}) <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+                {spotlightFeed && (
+                  <CCTVCard
+                    id={spotlightFeed.id}
+                    name={spotlightFeed.name}
+                    location={spotlightFeed.location}
+                    status={spotlightFeed.status}
+                    motionDetected={spotlightFeed.motionDetected}
+                    resolution={spotlightFeed.resolution}
+                    streamUrl={spotlightFeed.streamUrl}
+                    streamType={spotlightFeed.streamType}
+                    description={spotlightFeed.description}
+                    onToggleStatus={handleToggleCCTVStatus}
+                    onUpdateStream={handleUpdateCCTVStream}
                   />
-                ))}
+                )}
+              </div>
+
+              {/* Room Sensors Grid */}
+              <div className="lg:col-span-2 space-y-2">
+                <h2 className="text-base font-semibold text-white">
+                  🏠 Room Environmental Sensors (Live Telemetry)
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {rooms.slice(0, 4).map((room) => (
+                    <SensorCard
+                      key={room.id}
+                      room={room.name}
+                      icon={roomIcons[room.icon] || roomIcons['Monitor']}
+                      temperature={room.sensors.temperature}
+                      humidity={room.sensors.humidity}
+                      light={room.sensors.light}
+                      motion={room.sensors.motion}
+                      lightsOn={room.lightsOn}
+                      locked={room.locked}
+                      thermostatTarget={room.thermostatTarget}
+                      onToggleLight={() => handleToggleLight(room.id)}
+                      onToggleLock={() => handleToggleLock(room.id)}
+                    />
+                  ))}
+                </div>
               </div>
             </section>
+
+            {/* Remaining Room Sensors */}
+            {rooms.length > 4 && (
+              <section>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+                  {rooms.slice(4).map((room) => (
+                    <SensorCard
+                      key={room.id}
+                      room={room.name}
+                      icon={roomIcons[room.icon] || roomIcons['Monitor']}
+                      temperature={room.sensors.temperature}
+                      humidity={room.sensors.humidity}
+                      light={room.sensors.light}
+                      motion={room.sensors.motion}
+                      lightsOn={room.lightsOn}
+                      locked={room.locked}
+                      thermostatTarget={room.thermostatTarget}
+                      onToggleLight={() => handleToggleLight(room.id)}
+                      onToggleLock={() => handleToggleLock(room.id)}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Historical Chart */}
             <section>
               <h2 className="text-lg font-semibold text-white mb-4">
-                📈 Sensor Trends (24h)
+                📈 Sensor Trends (24h IoT History)
               </h2>
               <div className="bg-slate-800 rounded-xl p-6 border border-slate-700/50">
                 {historicalData.length > 0 && (
@@ -201,13 +310,10 @@ export default function DashboardPage() {
             {/* Alerts */}
             <section>
               <h2 className="text-lg font-semibold text-white mb-4">
-                🔔 Recent Alerts
+                🔔 Recent Alerts & Anomaly Triggers
               </h2>
               <div className="bg-slate-800 rounded-xl p-4 border border-slate-700/50 max-h-96 overflow-y-auto custom-scrollbar">
-                <AlertsList
-                  alerts={alerts}
-                  onDismiss={handleDismissAlert}
-                />
+                <AlertsList alerts={alerts} onDismiss={handleDismissAlert} />
               </div>
             </section>
           </div>
@@ -215,19 +321,62 @@ export default function DashboardPage() {
 
         {/* ─── CCTV Tab ──────────────────────────────────────────────────── */}
         {activeTab === 'cctv' && (
-          <section>
-            <h2 className="text-lg font-semibold text-white mb-4">
-              📹 Live Camera Feeds
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {cctvFeeds.map((feed) => (
+          <section className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-emerald-400" />
+                  <span>Real-Time CCTV Multi-Feed Console</span>
+                </h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Streaming 24/7 live open world webcams (Kitchen, Entrance, Lounge, Garden, Driveway) with AI Motion Detection HUD.
+                </p>
+              </div>
+
+              {/* Room Camera Filters */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  onClick={() => setCctvFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+                    cctvFilter === 'all'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-slate-800 text-gray-400 hover:text-white border border-slate-700'
+                  }`}
+                >
+                  All ({cctvFeeds.length})
+                </button>
+                {cctvFeeds.map((feed) => (
+                  <button
+                    key={feed.id}
+                    onClick={() => setCctvFilter(feed.name)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+                      cctvFilter.toLowerCase() === feed.name.toLowerCase()
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-slate-800 text-gray-400 hover:text-white border border-slate-700'
+                    }`}
+                  >
+                    {feed.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Camera Feeds Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {displayedCctvFeeds.map((feed) => (
                 <CCTVCard
                   key={feed.id}
+                  id={feed.id}
                   name={feed.name}
                   location={feed.location}
                   status={feed.status}
                   motionDetected={feed.motionDetected}
                   resolution={feed.resolution}
+                  streamUrl={feed.streamUrl}
+                  streamType={feed.streamType}
+                  description={feed.description}
+                  onToggleStatus={handleToggleCCTVStatus}
+                  onUpdateStream={handleUpdateCCTVStream}
                 />
               ))}
             </div>
@@ -238,7 +387,7 @@ export default function DashboardPage() {
         {activeTab === 'controls' && (
           <section>
             <h2 className="text-lg font-semibold text-white mb-4">
-              🎛️ Quick Controls
+              🎛️ Quick Actuator & Automation Controls
             </h2>
             <div className="bg-slate-800 rounded-xl p-6 border border-slate-700/50">
               <QuickControls
@@ -265,7 +414,7 @@ export default function DashboardPage() {
             Smart Home Monitoring System — Venkata Rao Dechiraju & Sivanesan,
             SRMIST
           </p>
-          <p>Built with Next.js • IoT & CCTV Integration</p>
+          <p>Next.js 14 • Real-Time CCTV Streaming & IoT Sensor Integration</p>
         </div>
       </footer>
     </div>

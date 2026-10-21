@@ -46,6 +46,9 @@ export interface CCTVFeed {
   motionDetected: boolean;
   lastMotion: Date | null;
   resolution: string;
+  streamUrl?: string;
+  streamType?: "youtube" | "video" | "iframe";
+  description?: string;
 }
 
 // ─── Utility Functions ───────────────────────────────────────────────────────
