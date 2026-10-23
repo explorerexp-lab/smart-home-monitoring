@@ -97,12 +97,12 @@ export const cameraPresets: CameraPreset[] = [
   },
   {
     id: 'preset-frontdoor-1',
-    label: 'Urban Entrance & Porch',
+    label: 'Front Door Entrance Live',
     room: 'Front Door',
-    streamUrl: 'rVLCmSXhXtg',
+    streamUrl: 'TmtVbezZaqg',
     streamType: 'youtube',
     resolution: '1080p',
-    description: 'Real-time pedestrian walkway and street entrance surveillance.',
+    description: 'Front door entrance approach 24/7 live camera feed.',
   },
   {
     id: 'preset-frontdoor-2',
@@ -142,12 +142,12 @@ export const cameraPresets: CameraPreset[] = [
   },
   {
     id: 'preset-garage-1',
-    label: '4K Driveway & Roadway Live',
+    label: 'Garage & Parking Area Live',
     room: 'Garage',
-    streamUrl: 'vk5BHoDxXf0',
+    streamUrl: 'R5tCjVq-56k',
     streamType: 'youtube',
-    resolution: '4K',
-    description: 'Vehicular driveway, highway traffic, and entrance approach.',
+    resolution: '1080p',
+    description: 'Garage, parking lot, and vehicular access 24/7 live camera feed.',
   },
 ];
 
@@ -172,9 +172,9 @@ export const cctvFeeds: CCTVFeed[] = [
     motionDetected: true,
     lastMotion: new Date(Date.now() - 2 * 60 * 1000),
     resolution: '1080p',
-    streamUrl: 'rVLCmSXhXtg',
+    streamUrl: 'TmtVbezZaqg',
     streamType: 'youtube',
-    description: 'Pedestrian walkway and entrance live stream (Tokyo Urban Walkway)',
+    description: 'Front door entrance 24/7 live surveillance feed',
   },
   {
     id: 'cam-living-room',
@@ -207,10 +207,10 @@ export const cctvFeeds: CCTVFeed[] = [
     status: 'online',
     motionDetected: false,
     lastMotion: null,
-    resolution: '4K',
-    streamUrl: 'vk5BHoDxXf0',
+    resolution: '1080p',
+    streamUrl: 'R5tCjVq-56k',
     streamType: 'youtube',
-    description: '4K Driveway and approach camera (City Expressway Live Stream)',
+    description: 'Garage & parking driveway 24/7 live surveillance feed',
   },
 ];
 

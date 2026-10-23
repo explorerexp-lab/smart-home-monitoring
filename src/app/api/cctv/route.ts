@@ -37,9 +37,9 @@ export async function GET() {
       motionDetected: Math.random() > 0.5,
       lastMotion: new Date(now - Math.floor(Math.random() * 600000)).toISOString(),
       resolution: '1080p',
-      streamUrl: 'rVLCmSXhXtg',
+      streamUrl: 'TmtVbezZaqg',
       streamType: 'youtube',
-      description: 'Pedestrian Walkway & Street Entrance Stream',
+      description: 'Front Door Entrance Live Surveillance',
     },
     {
       id: 'cam-living-room',
@@ -68,14 +68,14 @@ export async function GET() {
     {
       id: 'cam-garage',
       name: 'Garage',
-      location: 'Driveway & Approach',
+      location: 'Garage & Parking Approach',
       status: 'online',
       motionDetected: false,
       lastMotion: null,
-      resolution: '4K',
-      streamUrl: 'vk5BHoDxXf0',
+      resolution: '1080p',
+      streamUrl: 'R5tCjVq-56k',
       streamType: 'youtube',
-      description: '4K Expressway & Driveway Approach Stream',
+      description: 'Garage & Parking Driveway Live Stream',
     },
   ];
 
