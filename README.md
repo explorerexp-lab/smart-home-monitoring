@@ -79,18 +79,45 @@ This project is optimized for deployment on [Vercel](https://vercel.com):
 ## 📁 Project Structure
 
 ```
-src/
-├── app/
-│   ├── globals.css          # Global styles & Tailwind directives
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Main dashboard page
-├── components/              # Reusable UI components
-│   ├── dashboard/           # Dashboard-specific components
-│   └── ui/                  # Generic UI primitives
-└── lib/
-    ├── utils.ts             # Utilities, types & data generators
-    └── mock-data.ts         # Simulated sensor & device data
+.
+├── IoT_Application_Project_Report.pdf                # Primary Formal Academic Report (PDF)
+├── IoT_Application_Project_Report.docx               # Primary Formal Academic Report (DOCX)
+├── IoT_Application_Project_Report_v1_Rubric_and_Viva.pdf   # Version 1: Rubric & Viva Embedded (PDF)
+├── IoT_Application_Project_Report_v1_Rubric_and_Viva.docx  # Version 1: Rubric & Viva Embedded (DOCX)
+├── IoT_Application_Project_Report_v2_Formal_Academic.pdf  # Version 2: Formal Academic Thesis (PDF)
+├── IoT_Application_Project_Report_v2_Formal_Academic.docx # Version 2: Formal Academic Thesis (DOCX)
+├── Viva_Voce_Preparation_Guide.pdf                  # Standalone Viva Voce Defense Guide (PDF)
+├── Viva_Voce_Preparation_Guide.docx                 # Standalone Viva Voce Defense Guide (DOCX)
+├── diagrams/                                        # High-resolution architectural vector/PNG diagrams
+│   ├── system_block_diagram.png
+│   ├── four_layer_architecture.png
+│   └── cctv_motion_pipeline.png
+├── screenshots/                                     # Live dashboard proofs and CCTV feed captures
+├── slides/                                          # 20 Presentation slides for project defense
+├── src/
+│   ├── app/                                         # Next.js App Router pages and API routes
+│   ├── components/                                  # Modular UI, CCTV HUD, and sensor components
+│   └── lib/                                         # Mock data engines and WebSocket/MQTT handlers
+├── generate_report_docx.py                          # Automated Python DOCX generator (Academic v2)
+├── generate_report_pdf.py                           # Automated Playwright PDF generator (Academic v2)
+├── generate_report_v1_docx.py                       # Automated Python DOCX generator (Rubric v1)
+├── generate_report_v1_pdf.py                        # Automated Playwright PDF generator (Rubric v1)
+├── generate_viva_guide.py                           # Automated DOCX generator for Viva Guide
+└── generate_viva_pdf.py                             # Automated Playwright PDF generator for Viva Guide
 ```
+
+---
+
+## 📚 Project Reports & Defense Material
+
+Both versions of the project report are included to cater to distinct evaluation and archiving requirements:
+
+| Document | Format | Description |
+| :--- | :--- | :--- |
+| **Academic Project Report (v2 - Formal)** | [PDF](IoT_Application_Project_Report_v2_Formal_Academic.pdf) \| [DOCX](IoT_Application_Project_Report_v2_Formal_Academic.docx) | Formal academic thesis format: Declaration, Certificate, Abstract, Chapters 1 to 6 (Introduction, Literature Review, System Architecture, Implementation, Results, Conclusion), IEEE References, and Appendix. Clean and publication-ready. |
+| **Academic Project Report (v1 - Rubric Edition)** | [PDF](IoT_Application_Project_Report_v1_Rubric_and_Viva.pdf) \| [DOCX](IoT_Application_Project_Report_v1_Rubric_and_Viva.docx) | Direct mapping to evaluation rubrics: Application Explanation (10M), Architecture (05M), Code (10M), Results (05M), and Viva Guide (20M). |
+| **Viva Voce Defense Guide** | [PDF](Viva_Voce_Preparation_Guide.pdf) \| [DOCX](Viva_Voce_Preparation_Guide.docx) | Comprehensive oral defense preparation covering top 16 technical examiner questions with authoritative architectural answers. |
+| **Presentation Slide Deck** | [20 PNG Slides](slides/) | 20 high-fidelity visual slides covering project motivation, architecture, software stack, CCTV pipelines, live HUDs, and performance benchmarks. |
 
 ---
 
