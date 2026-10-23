@@ -2,51 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── CSS Variables for Dynamic Theming (OLED Friendly) ─────────────────── */
+/* ─── Color System (True Black Dark Mode & Clean Daylight Mode) ─────────── */
 
 :root,
-[data-theme="oled"] {
+[data-theme="dark"] {
   --bg-page: #000000;
-  --bg-card: #000000;
-  --bg-card-hover: #08080a;
-  --bg-card-subtle: #050507;
-  --bg-surface: #0b0b0e;
-  --bg-surface-hover: #141418;
+  --bg-card: #09090b;
+  --bg-card-hover: #121215;
+  --bg-card-subtle: #09090b;
+  --bg-surface: #121215;
+  --bg-surface-hover: #1a1a1f;
   --bg-header: #000000;
-  --bg-input: #000000;
-  --border-color: #242428;
-  --border-subtle: #18181c;
-  --border-highlight: #383842;
+  --bg-input: #09090b;
+  --border-color: #27272a;
+  --border-subtle: #1c1c1f;
+  --border-highlight: #3f3f46;
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
-  --chart-grid: #18181c;
-  --chart-tooltip-bg: #000000;
+  --chart-grid: #18181b;
+  --chart-tooltip-bg: #09090b;
   --chart-tooltip-border: #27272a;
   --scrollbar-thumb: #27272a;
   --scrollbar-track: #000000;
-}
-
-[data-theme="dark"] {
-  --bg-page: #020617;
-  --bg-card: #0f172a;
-  --bg-card-hover: #1e293b;
-  --bg-card-subtle: #1e293b;
-  --bg-surface: #1e293b;
-  --bg-surface-hover: #334155;
-  --bg-header: #0f172a;
-  --bg-input: #020617;
-  --border-color: #334155;
-  --border-subtle: rgba(51, 65, 85, 0.5);
-  --border-highlight: #475569;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --chart-grid: #334155;
-  --chart-tooltip-bg: #0f172a;
-  --chart-tooltip-border: #334155;
-  --scrollbar-thumb: #334155;
-  --scrollbar-track: #020617;
 }
 
 [data-theme="light"] {
@@ -106,15 +84,6 @@ body {
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-/* ─── Theme Transition ────────────────────────────────────────────────────── */
-
-html.theme-transition,
-html.theme-transition *,
-html.theme-transition *:before,
-html.theme-transition *:after {
-  transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out !important;
-}
-
 /* ─── Pulsing Dot Animation (Live Indicators) ─────────────────────────────── */
 
 @keyframes pulse-dot {
@@ -133,58 +102,44 @@ html.theme-transition *:after {
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
-/* ─── OLED Screen Friendly Enhancements ───────────────────────────────────── */
+/* ─── Dark Mode Adjustments for Slate Fallbacks ──────────────────────────── */
 
-/* In OLED mode, turn off pixels for all major card panels & page backgrounds */
-[data-theme="oled"] .bg-slate-950,
-[data-theme="oled"] .bg-dark {
+.dark .bg-slate-950,
+.dark .bg-dark {
   background-color: #000000 !important;
 }
 
-[data-theme="oled"] .bg-slate-900 {
-  background-color: #040405 !important;
+.dark .bg-slate-900 {
+  background-color: #09090b !important;
 }
 
-[data-theme="oled"] .bg-slate-850,
-[data-theme="oled"] .bg-slate-800 {
-  background-color: #000000 !important;
-  border-color: #242428 !important;
+.dark .bg-slate-850,
+.dark .bg-slate-800 {
+  background-color: #09090b !important;
+  border-color: #27272a !important;
 }
 
-[data-theme="oled"] .border-slate-700,
-[data-theme="oled"] .border-slate-700\/50,
-[data-theme="oled"] .border-slate-700\/60,
-[data-theme="oled"] .border-slate-700\/70,
-[data-theme="oled"] .border-slate-800 {
-  border-color: #242428 !important;
+.dark .border-slate-700,
+.dark .border-slate-700\/50,
+.dark .border-slate-700\/60,
+.dark .border-slate-700\/70,
+.dark .border-slate-800 {
+  border-color: #27272a !important;
 }
 
-[data-theme="oled"] .bg-slate-700\/50,
-[data-theme="oled"] .bg-slate-700\/60,
-[data-theme="oled"] .bg-slate-700\/30,
-[data-theme="oled"] .bg-slate-700\/20 {
-  background-color: #0c0c0e !important;
-}
-
-[data-theme="oled"] .bg-slate-700 {
+.dark .bg-slate-700\/50,
+.dark .bg-slate-700\/60,
+.dark .bg-slate-700\/30,
+.dark .bg-slate-700\/20 {
   background-color: #121215 !important;
 }
 
-[data-theme="oled"] .divide-slate-700\/30 > * + * {
-  border-color: #1a1a1d !important;
+.dark .bg-slate-700 {
+  background-color: #18181b !important;
 }
 
-/* OLED Razor Border & Glow Effects */
-.oled-border {
-  border: 1px solid var(--border-color);
-}
-
-.oled-neon-emerald {
-  box-shadow: 0 0 14px -3px rgba(16, 185, 129, 0.4);
-}
-
-.oled-neon-blue {
-  box-shadow: 0 0 14px -3px rgba(59, 130, 246, 0.4);
+.dark .divide-slate-700\/30 > * + * {
+  border-color: #1c1c1f !important;
 }
 
 /* ─── Light Mode Compatibility ────────────────────────────────────────────── */

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Home, Camera, Bell, Thermometer } from 'lucide-react';
-import { useTheme } from '@/context/ThemeContext';
 
 interface StatusOverviewProps {
   roomsCount: number;
@@ -21,16 +20,8 @@ interface StatCardProps {
 }
 
 function StatCard({ icon, label, value, accentBg, iconColor, badge }: StatCardProps) {
-  const { isOLED } = useTheme();
-
   return (
-    <div
-      className={`rounded-xl p-4 bg-[var(--bg-card)] border border-[var(--border-color)] transition-all duration-300 hover:-translate-y-0.5 ${
-        isOLED
-          ? 'hover:border-zinc-700 hover:shadow-[0_0_20px_rgba(0,0,0,0.8)]'
-          : 'hover:shadow-md'
-      }`}
-    >
+    <div className="rounded-xl p-4 bg-[var(--bg-card)] border border-[var(--border-color)] transition-all duration-300 hover:border-zinc-700 hover:-translate-y-0.5 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`p-2.5 rounded-lg ${accentBg} ${iconColor} border border-transparent`}>
@@ -84,7 +75,7 @@ export default function StatusOverview({
         value={activeAlerts}
         accentBg={activeAlerts > 0 ? 'bg-red-500/15' : 'bg-amber-500/15'}
         iconColor={activeAlerts > 0 ? 'text-red-400' : 'text-amber-400'}
-        badge={activeAlerts > 0 ? 'Needs Attention' : 'Nominal'}
+        badge={activeAlerts > 0 ? 'Action Needed' : 'Nominal'}
       />
       <StatCard
         icon={<Thermometer className="w-5 h-5" />}

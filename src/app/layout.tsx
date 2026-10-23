@@ -6,10 +6,10 @@ import { ThemeProvider } from '@/context/ThemeContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Smart Home Monitoring System (OLED Dark Mode)',
+  title: 'Smart Home Monitoring System',
   description:
-    'Integrated IoT and CCTV Feed Analysis with OLED-Friendly True Black Mode for Maximum Power Efficiency.',
-  keywords: ['smart home', 'IoT', 'CCTV', 'monitoring', 'automation', 'sensors', 'OLED', 'dark mode'],
+    'Real-time IoT sensor telemetry, actuator control, and 24/7 CCTV surveillance dashboard.',
+  keywords: ['smart home', 'IoT', 'CCTV', 'monitoring', 'automation', 'sensors', 'telemetry'],
   authors: [
     { name: 'Venkata Rao Dechiraju' },
     { name: 'Sivanesan' },
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark oled" data-theme="oled" suppressHydrationWarning>
+    <html lang="en" className="dark" data-theme="dark" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -30,17 +30,11 @@ export default function RootLayout({
               (function() {
                 try {
                   var saved = localStorage.getItem('smart-home-theme');
-                  var theme = saved || 'oled';
+                  var theme = saved === 'light' ? 'light' : 'dark';
                   var root = document.documentElement;
                   root.setAttribute('data-theme', theme);
-                  root.classList.remove('dark', 'light', 'oled');
-                  if (theme === 'oled') {
-                    root.classList.add('dark', 'oled');
-                  } else if (theme === 'dark') {
-                    root.classList.add('dark');
-                  } else {
-                    root.classList.add('light');
-                  }
+                  root.classList.remove('dark', 'light');
+                  root.classList.add(theme);
                 } catch (e) {}
               })();
             `,

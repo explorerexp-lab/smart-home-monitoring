@@ -10,11 +10,7 @@ import {
   Monitor,
   Camera,
   ArrowRight,
-  Zap,
-  Leaf,
-  ShieldCheck,
   Sliders,
-  Sparkles,
 } from 'lucide-react';
 import Header from '@/components/Header';
 import StatusOverview from '@/components/StatusOverview';
@@ -30,7 +26,6 @@ import {
   cctvFeeds as initialCCTVFeeds,
   alerts as initialAlerts,
 } from '@/lib/mock-data';
-import { useTheme } from '@/context/ThemeContext';
 
 // ─── Room Icon Map ───────────────────────────────────────────────────────────
 
@@ -56,9 +51,6 @@ export default function DashboardPage() {
   const [cctvFilter, setCctvFilter] = useState<string>('all');
   const [historicalData, setHistoricalData] = useState<HistoricalDataPoint[]>([]);
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
-  const [showOledBanner, setShowOledBanner] = useState<boolean>(true);
-
-  const { theme, isOLED, powerSavings, setTheme } = useTheme();
 
   // Generate historical data on mount
   useEffect(() => {
@@ -181,48 +173,11 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] transition-colors duration-200">
-      {/* Header with OLED / Theme Switcher */}
+      {/* Header with Theme Switcher */}
       <Header alertCount={unreadAlerts} />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* OLED Screen Optimization Efficiency Bar */}
-        {isOLED && showOledBanner && (
-          <div className="rounded-xl p-3 sm:p-3.5 bg-black border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.15)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
-                <Zap className="w-4 h-4 fill-emerald-400 text-emerald-400" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-mono font-bold text-white tracking-wide">
-                    OLED PURE BLACK MODE ACTIVE
-                  </span>
-                  <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    True #000000 Pixel Shutoff
-                  </span>
-                </div>
-                <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
-                  Zero backlight bleed • Infinite 1,000,000:1 contrast • Minimizes battery drain and OLED burn-in risk.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-              <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-700 text-emerald-400 font-bold">
-                {powerSavings}
-              </span>
-              <button
-                onClick={() => setShowOledBanner(false)}
-                className="text-[11px] text-zinc-500 hover:text-zinc-300 font-mono px-2 py-1 rounded hover:bg-zinc-900 transition-colors"
-                title="Dismiss OLED info bar"
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Status Overview Strip */}
         <StatusOverview
           roomsCount={rooms.length}
@@ -241,9 +196,7 @@ export default function DashboardPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-4 py-2.5 rounded-t-lg text-sm font-medium transition-all duration-200 border-b-2 ${
                   isActive
-                    ? isOLED
-                      ? 'bg-zinc-900 text-white border-emerald-500 shadow-sm'
-                      : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-blue-500 shadow-sm'
+                    ? 'bg-[var(--bg-card)] text-[var(--text-primary)] border-blue-500 shadow-sm'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] border-transparent'
                 }`}
               >
@@ -267,9 +220,9 @@ export default function DashboardPage() {
               {/* Live Spotlight Feed (Kitchen / Primary Cam) */}
               <div className="lg:col-span-1 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-primary)] flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-emerald-400" />
-                    <span>Real-Time CCTV Spotlight</span>
+                  <h2 className="text-xs font-semibold font-mono uppercase tracking-wider text-[var(--text-secondary)] flex items-center gap-2">
+                    <Camera className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Live CCTV Spotlight</span>
                   </h2>
                   <button
                     onClick={() => setActiveTab('cctv')}
@@ -297,8 +250,8 @@ export default function DashboardPage() {
 
               {/* Room Sensors Grid */}
               <div className="lg:col-span-2 space-y-2">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-primary)]">
-                  🏠 Room Environmental Telemetry
+                <h2 className="text-xs font-semibold font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+                  Environmental Telemetry
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {rooms.slice(0, 4).map((room) => (
@@ -347,9 +300,6 @@ export default function DashboardPage() {
 
             {/* Historical Chart */}
             <section>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-primary)] mb-3">
-                📈 Telemetry Trends (24h IoT History)
-              </h2>
               {historicalData.length > 0 && (
                 <SensorChart data={historicalData} />
               )}
@@ -357,9 +307,6 @@ export default function DashboardPage() {
 
             {/* Alerts */}
             <section>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-primary)] mb-3">
-                🔔 Recent Security & Environmental Alerts
-              </h2>
               <AlertsList alerts={alerts} onDismiss={handleDismissAlert} />
             </section>
           </div>
@@ -371,11 +318,11 @@ export default function DashboardPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
-                  <Camera className="w-5 h-5 text-emerald-400" />
-                  <span>Real-Time CCTV Multi-Feed Console</span>
+                  <Camera className="w-4 h-4 text-emerald-400" />
+                  <span>CCTV Multi-Feed Console</span>
                 </h2>
                 <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">
-                  Streaming 24/7 live open world feeds with AI Motion Detection HUD & preset selector.
+                  Live open camera streams with motion detection HUD & camera switcher.
                 </p>
               </div>
 
@@ -385,9 +332,7 @@ export default function DashboardPage() {
                   onClick={() => setCctvFilter('all')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
                     cctvFilter === 'all'
-                      ? isOLED
-                        ? 'bg-emerald-600 text-white shadow-md'
-                        : 'bg-blue-600 text-white shadow-md'
+                      ? 'bg-blue-600 text-white shadow-md'
                       : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)]'
                   }`}
                 >
@@ -399,9 +344,7 @@ export default function DashboardPage() {
                     onClick={() => setCctvFilter(feed.name)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
                       cctvFilter.toLowerCase() === feed.name.toLowerCase()
-                        ? isOLED
-                          ? 'bg-emerald-600 text-white shadow-md'
-                          : 'bg-blue-600 text-white shadow-md'
+                        ? 'bg-blue-600 text-white shadow-md'
                         : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)]'
                     }`}
                   >
@@ -436,10 +379,6 @@ export default function DashboardPage() {
         {/* ─── Controls Tab ──────────────────────────────────────────────── */}
         {activeTab === 'controls' && (
           <section className="space-y-4">
-            <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Sliders className="w-5 h-5 text-emerald-400" />
-              <span>Smart Home Actuator & Automation Relays</span>
-            </h2>
             <QuickControls
               rooms={rooms.map((r) => ({
                 id: r.id,
@@ -462,14 +401,7 @@ export default function DashboardPage() {
           <p>
             Smart Home Monitoring System — Venkata Rao Dechiraju & Sivanesan, SRMIST
           </p>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-emerald-400">
-              <Zap className="w-3.5 h-3.5 fill-emerald-400" />
-              <span>OLED-Optimized Display</span>
-            </span>
-            <span>•</span>
-            <span>Next.js 14 • 24/7 CCTV & IoT Telemetry</span>
-          </div>
+          <p>Next.js 14 • 24/7 CCTV & IoT Telemetry</p>
         </div>
       </footer>
     </div>

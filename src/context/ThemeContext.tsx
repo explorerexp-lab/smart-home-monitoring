@@ -2,15 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-export type ThemeMode = 'oled' | 'dark' | 'light';
+export type ThemeMode = 'dark' | 'light';
 
 interface ThemeContextType {
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
-  cycleTheme: () => void;
-  isOLED: boolean;
+  toggleTheme: () => void;
   isDark: boolean;
-  powerSavings: string;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -18,43 +16,36 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const STORAGE_KEY = 'smart-home-theme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Default to OLED dark mode as requested by user
-  const [theme, setThemeState] = useState<ThemeMode>('oled');
+  const [theme, setThemeState] = useState<ThemeMode>('dark');
   const [mounted, setMounted] = useState(false);
 
-  // Apply theme to document element
   const applyTheme = useCallback((newTheme: ThemeMode) => {
     if (typeof document === 'undefined') return;
 
     const root = document.documentElement;
     root.setAttribute('data-theme', newTheme);
-
-    // Update classes for Tailwind dark: support
     root.classList.remove('dark', 'light', 'oled');
-    if (newTheme === 'oled') {
-      root.classList.add('dark', 'oled');
-    } else if (newTheme === 'dark') {
+
+    if (newTheme === 'dark') {
       root.classList.add('dark');
     } else {
       root.classList.add('light');
     }
   }, []);
 
-  // Initialize theme from localStorage or default to OLED
   useEffect(() => {
     try {
       const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-      if (savedTheme && (savedTheme === 'oled' || savedTheme === 'dark' || savedTheme === 'light')) {
+      if (savedTheme === 'light' || savedTheme === 'dark') {
         setThemeState(savedTheme);
         applyTheme(savedTheme);
       } else {
-        // Default to OLED mode for maximum OLED screen friendliness
-        setThemeState('oled');
-        applyTheme('oled');
-        localStorage.setItem(STORAGE_KEY, 'oled');
+        setThemeState('dark');
+        applyTheme('dark');
+        localStorage.setItem(STORAGE_KEY, 'dark');
       }
     } catch {
-      applyTheme('oled');
+      applyTheme('dark');
     }
     setMounted(true);
   }, [applyTheme]);
@@ -72,11 +63,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [applyTheme]
   );
 
-  const cycleTheme = useCallback(() => {
+  const toggleTheme = useCallback(() => {
     setThemeState((current) => {
-      const order: ThemeMode[] = ['oled', 'dark', 'light'];
-      const nextIndex = (order.indexOf(current) + 1) % order.length;
-      const nextTheme = order[nextIndex];
+      const nextTheme: ThemeMode = current === 'dark' ? 'light' : 'dark';
       applyTheme(nextTheme);
       try {
         localStorage.setItem(STORAGE_KEY, nextTheme);
@@ -87,10 +76,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
   }, [applyTheme]);
 
-  // Global keyboard shortcuts: 't' to cycle, 'o' for instant OLED mode
+  // Keyboard shortcut: 'T' to toggle theme
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input or textarea
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement
@@ -99,33 +87,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (e.key === 't' || e.key === 'T') {
-        cycleTheme();
-      } else if (e.key === 'o' || e.key === 'O') {
-        setTheme('oled');
+        toggleTheme();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [cycleTheme, setTheme]);
-
-  // Estimated display power savings on OLED / AMOLED displays
-  const powerSavings =
-    theme === 'oled'
-      ? '~68% Display Power Saved'
-      : theme === 'dark'
-      ? '~32% Display Power Saved'
-      : '0% (Baseline LCD/White)';
+  }, [toggleTheme]);
 
   return (
     <ThemeContext.Provider
       value={{
         theme,
         setTheme,
-        cycleTheme,
-        isOLED: theme === 'oled',
-        isDark: theme === 'oled' || theme === 'dark',
-        powerSavings,
+        toggleTheme,
+        isDark: theme === 'dark',
       }}
     >
       {children}

@@ -11,7 +11,6 @@ import {
   Lock,
   Unlock,
 } from 'lucide-react';
-import { useTheme } from '@/context/ThemeContext';
 
 interface SensorCardProps {
   room: string;
@@ -52,23 +51,15 @@ export default function SensorCard({
   onToggleLight,
   onToggleLock,
 }: SensorCardProps) {
-  const { isOLED } = useTheme();
-
   return (
-    <div
-      className={`bg-[var(--bg-card)] rounded-xl p-5 border border-[var(--border-color)] transition-all duration-300 hover:-translate-y-0.5 ${
-        isOLED
-          ? 'hover:border-zinc-700 hover:shadow-[0_0_20px_rgba(0,0,0,0.9)]'
-          : 'hover:shadow-lg hover:shadow-slate-900/20'
-      }`}
-    >
+    <div className="bg-[var(--bg-card)] rounded-xl p-5 border border-[var(--border-color)] transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-700 shadow-sm">
       {/* Room Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <div className="p-2 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg">
             {icon}
           </div>
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">{room}</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">{room}</h3>
         </div>
         <div className="flex items-center gap-1.5">
           <span
@@ -151,7 +142,7 @@ export default function SensorCard({
           onClick={onToggleLight}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all border ${
             lightsOn
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.2)]'
+              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30 hover:bg-amber-500/25'
               : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border-color)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
           }`}
         >
@@ -168,8 +159,8 @@ export default function SensorCard({
           onClick={onToggleLock}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all border ${
             locked
-              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.2)]'
-              : 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30 shadow-[0_0_8px_rgba(244,63,94,0.2)]'
+              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
+              : 'bg-rose-500/15 text-rose-300 border-rose-500/30 hover:bg-rose-500/25'
           }`}
         >
           {locked ? (

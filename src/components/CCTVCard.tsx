@@ -16,7 +16,6 @@ import {
   Check,
 } from 'lucide-react';
 import { cameraPresets, CameraPreset } from '@/lib/mock-data';
-import { useTheme } from '@/context/ThemeContext';
 
 export interface CCTVCardProps {
   id?: string;
@@ -65,7 +64,6 @@ export default function CCTVCard({
   const [timestamp, setTimestamp] = useState<Date>(new Date());
   const [fps, setFps] = useState<number>(29.9);
   const [isReloading, setIsReloading] = useState<boolean>(false);
-  const { isOLED } = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -158,9 +156,9 @@ export default function CCTVCard({
   return (
     <div
       ref={containerRef}
-      className={`group bg-[var(--bg-card)] rounded-xl overflow-hidden border border-[var(--border-color)] transition-all duration-300 flex flex-col ${
-        isOLED ? 'border-zinc-800 shadow-[0_0_20px_rgba(0,0,0,0.9)]' : 'shadow-xl'
-      } ${isFullscreen ? 'w-full h-full p-2' : ''}`}
+      className={`group bg-[var(--bg-card)] rounded-xl overflow-hidden border border-[var(--border-color)] transition-all duration-300 flex flex-col hover:border-zinc-700 shadow-sm ${
+        isFullscreen ? 'w-full h-full p-2' : ''
+      }`}
     >
       {/* ─── Video Viewport ─── */}
       <div className="relative aspect-video w-full bg-black overflow-hidden select-none">

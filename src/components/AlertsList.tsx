@@ -10,7 +10,6 @@ import {
   Move,
   X,
 } from 'lucide-react';
-import { useTheme } from '@/context/ThemeContext';
 
 type AlertSeverity = 'low' | 'medium' | 'high' | 'critical';
 type AlertType = 'motion' | 'temperature' | 'smoke' | 'intrusion';
@@ -60,8 +59,6 @@ function getAlertIcon(type: AlertType) {
 }
 
 export default function AlertsList({ alerts, onDismiss }: AlertsListProps) {
-  const { isOLED } = useTheme();
-
   if (alerts.length === 0) {
     return (
       <div className="bg-[var(--bg-card)] rounded-xl p-8 border border-[var(--border-color)] flex flex-col items-center justify-center text-center">
@@ -95,9 +92,7 @@ export default function AlertsList({ alerts, onDismiss }: AlertsListProps) {
               severityBorderColors[alert.severity]
             } ${
               !alert.read
-                ? isOLED
-                  ? 'bg-zinc-950/60'
-                  : 'bg-[var(--bg-surface)]/50'
+                ? 'bg-[var(--bg-surface)]/60'
                 : 'bg-transparent'
             } hover:bg-[var(--bg-surface-hover)] transition-colors`}
           >

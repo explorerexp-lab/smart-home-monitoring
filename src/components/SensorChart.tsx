@@ -59,22 +59,15 @@ interface CustomTooltipProps {
   payload?: Array<{ value: number }>;
   label?: string;
   metric: ActiveMetric;
-  isOLED: boolean;
 }
 
-function CustomTooltip({ active, payload, label, metric, isOLED }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, label, metric }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   const config = metricConfig[metric];
 
   return (
-    <div
-      className={`rounded-lg p-3 shadow-2xl border font-mono ${
-        isOLED
-          ? 'bg-black border-zinc-700 shadow-[0_0_15px_rgba(0,0,0,1)]'
-          : 'bg-[var(--bg-card)] border-[var(--border-color)]'
-      }`}
-    >
+    <div className="rounded-lg p-3 shadow-xl border font-mono bg-[var(--bg-card)] border-[var(--border-color)]">
       <p className="text-[11px] text-[var(--text-muted)] mb-1">{label}</p>
       <p className="text-sm font-bold flex items-center gap-1.5" style={{ color: config.color }}>
         <span>{payload[0].value.toFixed(1)}</span>
@@ -89,26 +82,24 @@ export default function SensorChart({
   activeMetric: initialMetric = 'temperature',
 }: SensorChartProps) {
   const [activeMetric, setActiveMetric] = useState<ActiveMetric>(initialMetric);
-  const { theme, isOLED } = useTheme();
+  const { isDark } = useTheme();
 
   const config = metricConfig[activeMetric];
 
-  // Dynamic colors for SVG axes and grid
-  const gridColor = isOLED ? '#1c1c20' : theme === 'light' ? '#e2e8f0' : '#334155';
-  const tickColor = isOLED ? '#71717a' : theme === 'light' ? '#64748b' : '#94a3b8';
-  const dotFillColor = isOLED ? '#000000' : theme === 'light' ? '#ffffff' : '#1e293b';
+  // Refined neutral colors for grid lines & axes
+  const gridColor = isDark ? '#1f1f23' : '#e2e8f0';
+  const tickColor = isDark ? '#71717a' : '#64748b';
+  const dotFillColor = isDark ? '#000000' : '#ffffff';
 
   return (
     <div className="bg-[var(--bg-card)] rounded-xl p-5 sm:p-6 border border-[var(--border-color)] transition-colors duration-200">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
         <div>
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-primary)]">
             Sensor Telemetry History
           </h3>
-          <p className="text-xs text-[var(--text-muted)] font-mono">
-            {isOLED
-              ? '⚡ High-Contrast OLED Telemetry Curve • 24h Rolling Window'
-              : 'Continuous 24-hour environmental sensor log'}
+          <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">
+            Continuous 24-hour environmental sensor log
           </p>
         </div>
 
@@ -123,9 +114,7 @@ export default function SensorChart({
                 onClick={() => setActiveMetric(metric)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all ${
                   isActive
-                    ? isOLED
-                      ? 'bg-zinc-800 text-white border border-zinc-600 shadow-sm'
-                      : 'bg-[var(--bg-surface-hover)] text-[var(--text-primary)] shadow-sm'
+                    ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm border border-[var(--border-color)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -146,7 +135,7 @@ export default function SensorChart({
                 <stop
                   offset="5%"
                   stopColor={config.color}
-                  stopOpacity={isOLED ? 0.35 : 0.25}
+                  stopOpacity={isDark ? 0.3 : 0.2}
                 />
                 <stop
                   offset="95%"
@@ -173,7 +162,6 @@ export default function SensorChart({
               content={
                 <CustomTooltip
                   metric={activeMetric}
-                  isOLED={isOLED}
                 />
               }
             />
@@ -181,11 +169,11 @@ export default function SensorChart({
               type="monotone"
               dataKey={activeMetric}
               stroke={config.color}
-              strokeWidth={2.5}
+              strokeWidth={2}
               fill={`url(#${config.gradientId})`}
               dot={false}
               activeDot={{
-                r: 6,
+                r: 5,
                 stroke: config.color,
                 strokeWidth: 2,
                 fill: dotFillColor,

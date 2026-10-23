@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Lightbulb, LightbulbOff, Lock, Unlock, Plus, Minus, Thermometer } from 'lucide-react';
-import { useTheme } from '@/context/ThemeContext';
 
 interface Room {
   id: string;
@@ -66,8 +65,6 @@ export default function QuickControls({
   onToggleLock,
   onSetThermostat,
 }: QuickControlsProps) {
-  const { isOLED } = useTheme();
-
   return (
     <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-color)] overflow-hidden transition-colors">
       <div className="p-4 border-b border-[var(--border-color)] flex items-center justify-between">
