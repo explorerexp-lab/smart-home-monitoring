@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Thermometer, Droplets, Sun } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 
 type ActiveMetric = 'temperature' | 'humidity' | 'light';
 
@@ -39,14 +40,14 @@ const metricConfig: Record<
   },
   humidity: {
     label: 'Humidity',
-    color: '#60a5fa',
+    color: '#38bdf8',
     gradientId: 'humidGradient',
     unit: '%',
     icon: <Droplets className="w-4 h-4" />,
   },
   light: {
     label: 'Light',
-    color: '#facc15',
+    color: '#fbbf24',
     gradientId: 'lightGradient',
     unit: ' lux',
     icon: <Sun className="w-4 h-4" />,
@@ -58,36 +59,61 @@ interface CustomTooltipProps {
   payload?: Array<{ value: number }>;
   label?: string;
   metric: ActiveMetric;
+  isOLED: boolean;
 }
 
-function CustomTooltip({ active, payload, label, metric }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, label, metric, isOLED }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   const config = metricConfig[metric];
 
   return (
-    <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-xl">
-      <p className="text-xs text-gray-400 mb-1">{label}</p>
-      <p className="text-sm font-bold" style={{ color: config.color }}>
-        {payload[0].value.toFixed(1)}
-        {config.unit}
+    <div
+      className={`rounded-lg p-3 shadow-2xl border font-mono ${
+        isOLED
+          ? 'bg-black border-zinc-700 shadow-[0_0_15px_rgba(0,0,0,1)]'
+          : 'bg-[var(--bg-card)] border-[var(--border-color)]'
+      }`}
+    >
+      <p className="text-[11px] text-[var(--text-muted)] mb-1">{label}</p>
+      <p className="text-sm font-bold flex items-center gap-1.5" style={{ color: config.color }}>
+        <span>{payload[0].value.toFixed(1)}</span>
+        <span className="text-xs">{config.unit}</span>
       </p>
     </div>
   );
 }
 
-export default function SensorChart({ data, activeMetric: initialMetric = 'temperature' }: SensorChartProps) {
+export default function SensorChart({
+  data,
+  activeMetric: initialMetric = 'temperature',
+}: SensorChartProps) {
   const [activeMetric, setActiveMetric] = useState<ActiveMetric>(initialMetric);
+  const { theme, isOLED } = useTheme();
 
   const config = metricConfig[activeMetric];
 
+  // Dynamic colors for SVG axes and grid
+  const gridColor = isOLED ? '#1c1c20' : theme === 'light' ? '#e2e8f0' : '#334155';
+  const tickColor = isOLED ? '#71717a' : theme === 'light' ? '#64748b' : '#94a3b8';
+  const dotFillColor = isOLED ? '#000000' : theme === 'light' ? '#ffffff' : '#1e293b';
+
   return (
-    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700/50">
+    <div className="bg-[var(--bg-card)] rounded-xl p-5 sm:p-6 border border-[var(--border-color)] transition-colors duration-200">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
-        <h3 className="text-lg font-semibold text-white">Sensor History</h3>
+        <div>
+          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+            Sensor Telemetry History
+          </h3>
+          <p className="text-xs text-[var(--text-muted)] font-mono">
+            {isOLED
+              ? '⚡ High-Contrast OLED Telemetry Curve • 24h Rolling Window'
+              : 'Continuous 24-hour environmental sensor log'}
+          </p>
+        </div>
 
         {/* Metric Tabs */}
-        <div className="flex gap-1 bg-slate-700/50 rounded-lg p-1">
+        <div className="flex gap-1 bg-[var(--bg-surface)] rounded-lg p-1 border border-[var(--border-color)]">
           {(Object.keys(metricConfig) as ActiveMetric[]).map((metric) => {
             const m = metricConfig[metric];
             const isActive = metric === activeMetric;
@@ -95,14 +121,16 @@ export default function SensorChart({ data, activeMetric: initialMetric = 'tempe
               <button
                 key={metric}
                 onClick={() => setActiveMetric(metric)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all ${
                   isActive
-                    ? 'bg-slate-600 text-white shadow-sm'
-                    : 'text-gray-400 hover:text-gray-300 hover:bg-slate-700/50'
+                    ? isOLED
+                      ? 'bg-zinc-800 text-white border border-zinc-600 shadow-sm'
+                      : 'bg-[var(--bg-surface-hover)] text-[var(--text-primary)] shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 {m.icon}
-                <span className="hidden sm:inline">{m.label}</span>
+                <span>{m.label}</span>
               </button>
             );
           })}
@@ -110,38 +138,58 @@ export default function SensorChart({ data, activeMetric: initialMetric = 'tempe
       </div>
 
       {/* Chart */}
-      <div className="h-64">
+      <div className="h-64 sm:h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id={config.gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={config.color} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={config.color} stopOpacity={0} />
+                <stop
+                  offset="5%"
+                  stopColor={config.color}
+                  stopOpacity={isOLED ? 0.35 : 0.25}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={config.color}
+                  stopOpacity={0.0}
+                />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis
               dataKey="timestamp"
-              stroke="#64748b"
-              tick={{ fontSize: 12, fill: '#94a3b8' }}
+              stroke={tickColor}
+              tick={{ fontSize: 11, fill: tickColor, fontFamily: 'monospace' }}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              stroke="#64748b"
-              tick={{ fontSize: 12, fill: '#94a3b8' }}
+              stroke={tickColor}
+              tick={{ fontSize: 11, fill: tickColor, fontFamily: 'monospace' }}
               tickLine={false}
               axisLine={false}
             />
-            <Tooltip content={<CustomTooltip metric={activeMetric} />} />
+            <Tooltip
+              content={
+                <CustomTooltip
+                  metric={activeMetric}
+                  isOLED={isOLED}
+                />
+              }
+            />
             <Area
               type="monotone"
               dataKey={activeMetric}
               stroke={config.color}
-              strokeWidth={2}
+              strokeWidth={2.5}
               fill={`url(#${config.gradientId})`}
               dot={false}
-              activeDot={{ r: 5, stroke: config.color, strokeWidth: 2, fill: '#1e293b' }}
+              activeDot={{
+                r: 6,
+                stroke: config.color,
+                strokeWidth: 2,
+                fill: dotFillColor,
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>

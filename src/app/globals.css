@@ -2,10 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── CSS Variables for Dynamic Theming (OLED Friendly) ─────────────────── */
+
+:root,
+[data-theme="oled"] {
+  --bg-page: #000000;
+  --bg-card: #000000;
+  --bg-card-hover: #08080a;
+  --bg-card-subtle: #050507;
+  --bg-surface: #0b0b0e;
+  --bg-surface-hover: #141418;
+  --bg-header: #000000;
+  --bg-input: #000000;
+  --border-color: #242428;
+  --border-subtle: #18181c;
+  --border-highlight: #383842;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --chart-grid: #18181c;
+  --chart-tooltip-bg: #000000;
+  --chart-tooltip-border: #27272a;
+  --scrollbar-thumb: #27272a;
+  --scrollbar-track: #000000;
+}
+
+[data-theme="dark"] {
+  --bg-page: #020617;
+  --bg-card: #0f172a;
+  --bg-card-hover: #1e293b;
+  --bg-card-subtle: #1e293b;
+  --bg-surface: #1e293b;
+  --bg-surface-hover: #334155;
+  --bg-header: #0f172a;
+  --bg-input: #020617;
+  --border-color: #334155;
+  --border-subtle: rgba(51, 65, 85, 0.5);
+  --border-highlight: #475569;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --chart-grid: #334155;
+  --chart-tooltip-bg: #0f172a;
+  --chart-tooltip-border: #334155;
+  --scrollbar-thumb: #334155;
+  --scrollbar-track: #020617;
+}
+
+[data-theme="light"] {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-card-subtle: #f8fafc;
+  --bg-surface: #f1f5f9;
+  --bg-surface-hover: #e2e8f0;
+  --bg-header: #ffffff;
+  --bg-input: #ffffff;
+  --border-color: #e2e8f0;
+  --border-subtle: rgba(226, 232, 240, 0.8);
+  --border-highlight: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --chart-grid: #e2e8f0;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #cbd5e1;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-track: #f8fafc;
+}
+
 /* ─── Base Styles ──────────────────────────────────────────────────────────── */
 
 body {
-  @apply bg-dark text-gray-100 antialiased;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ─── Custom Scrollbar ─────────────────────────────────────────────────────── */
@@ -16,27 +89,30 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-dark;
+  background-color: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-surface rounded-full;
+  background-color: var(--scrollbar-thumb);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+  filter: brightness(1.2);
 }
 
-/* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #334155 #0f172a;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-/* ─── Smooth Transitions ──────────────────────────────────────────────────── */
+/* ─── Theme Transition ────────────────────────────────────────────────────── */
 
-* {
-  @apply transition-colors duration-200;
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *:before,
+html.theme-transition *:after {
+  transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out !important;
 }
 
 /* ─── Pulsing Dot Animation (Live Indicators) ─────────────────────────────── */
@@ -49,10 +125,133 @@ body {
   }
   50% {
     opacity: 0.5;
-    transform: scale(1.5);
+    transform: scale(1.4);
   }
 }
 
 .pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ─── OLED Screen Friendly Enhancements ───────────────────────────────────── */
+
+/* In OLED mode, turn off pixels for all major card panels & page backgrounds */
+[data-theme="oled"] .bg-slate-950,
+[data-theme="oled"] .bg-dark {
+  background-color: #000000 !important;
+}
+
+[data-theme="oled"] .bg-slate-900 {
+  background-color: #040405 !important;
+}
+
+[data-theme="oled"] .bg-slate-850,
+[data-theme="oled"] .bg-slate-800 {
+  background-color: #000000 !important;
+  border-color: #242428 !important;
+}
+
+[data-theme="oled"] .border-slate-700,
+[data-theme="oled"] .border-slate-700\/50,
+[data-theme="oled"] .border-slate-700\/60,
+[data-theme="oled"] .border-slate-700\/70,
+[data-theme="oled"] .border-slate-800 {
+  border-color: #242428 !important;
+}
+
+[data-theme="oled"] .bg-slate-700\/50,
+[data-theme="oled"] .bg-slate-700\/60,
+[data-theme="oled"] .bg-slate-700\/30,
+[data-theme="oled"] .bg-slate-700\/20 {
+  background-color: #0c0c0e !important;
+}
+
+[data-theme="oled"] .bg-slate-700 {
+  background-color: #121215 !important;
+}
+
+[data-theme="oled"] .divide-slate-700\/30 > * + * {
+  border-color: #1a1a1d !important;
+}
+
+/* OLED Razor Border & Glow Effects */
+.oled-border {
+  border: 1px solid var(--border-color);
+}
+
+.oled-neon-emerald {
+  box-shadow: 0 0 14px -3px rgba(16, 185, 129, 0.4);
+}
+
+.oled-neon-blue {
+  box-shadow: 0 0 14px -3px rgba(59, 130, 246, 0.4);
+}
+
+/* ─── Light Mode Compatibility ────────────────────────────────────────────── */
+
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .bg-slate-950,
+[data-theme="light"] .bg-dark {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] .bg-slate-900 {
+  background-color: #ffffff !important;
+}
+
+[data-theme="light"] .bg-slate-850,
+[data-theme="light"] .bg-slate-800 {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .border-slate-700,
+[data-theme="light"] .border-slate-700\/50,
+[data-theme="light"] .border-slate-700\/60,
+[data-theme="light"] .border-slate-700\/70,
+[data-theme="light"] .border-slate-800 {
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-gray-100 {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .text-gray-200 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-gray-300 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-gray-400 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] .bg-slate-700\/50,
+[data-theme="light"] .bg-slate-700\/60,
+[data-theme="light"] .bg-slate-700\/30,
+[data-theme="light"] .bg-slate-700\/20 {
+  background-color: #f1f5f9 !important;
+}
+
+[data-theme="light"] .bg-slate-700 {
+  background-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .divide-slate-700\/30 > * + * {
+  border-color: #e2e8f0 !important;
 }

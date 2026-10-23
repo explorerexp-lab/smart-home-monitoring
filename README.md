@@ -11,7 +11,8 @@ A modern, real-time web dashboard for monitoring IoT sensors and simulated CCTV 
 - **CCTV Feed Simulation** — Simulated live camera feeds with motion detection indicators and status monitoring.
 - **Alert Management** — Prioritized alerts for motion, temperature anomalies, smoke detection, and intrusion events.
 - **Historical Data Charts** — Interactive charts powered by Recharts displaying sensor trends over time.
-- **Dark-Themed UI** — A sleek, dark-mode interface optimized for monitoring dashboards.
+- **OLED Screen Friendly Dark Mode & Multi-Theme Support** — Pure Pitch Black (`#000000`) OLED mode where pixels turn 100% off for maximum battery savings (~68% display efficiency) and zero backlight bleed, alongside Midnight Slate and Daylight Light themes.
+- **Interactive Theme Switcher & Shortcuts** — Instant toggling via header dropdown or keyboard shortcuts (`T` to cycle, `O` for instant OLED mode) with persistence in `localStorage` and zero flash of unstyled content.
 - **Responsive Design** — Fully responsive layout that works across desktop, tablet, and mobile devices.
 
 ---

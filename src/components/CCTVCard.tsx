@@ -16,6 +16,7 @@ import {
   Check,
 } from 'lucide-react';
 import { cameraPresets, CameraPreset } from '@/lib/mock-data';
+import { useTheme } from '@/context/ThemeContext';
 
 export interface CCTVCardProps {
   id?: string;
@@ -64,6 +65,7 @@ export default function CCTVCard({
   const [timestamp, setTimestamp] = useState<Date>(new Date());
   const [fps, setFps] = useState<number>(29.9);
   const [isReloading, setIsReloading] = useState<boolean>(false);
+  const { isOLED } = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -156,9 +158,9 @@ export default function CCTVCard({
   return (
     <div
       ref={containerRef}
-      className={`group bg-slate-900 rounded-xl overflow-hidden border border-slate-700/60 shadow-xl transition-all duration-300 flex flex-col ${
-        isFullscreen ? 'w-full h-full p-2' : ''
-      }`}
+      className={`group bg-[var(--bg-card)] rounded-xl overflow-hidden border border-[var(--border-color)] transition-all duration-300 flex flex-col ${
+        isOLED ? 'border-zinc-800 shadow-[0_0_20px_rgba(0,0,0,0.9)]' : 'shadow-xl'
+      } ${isFullscreen ? 'w-full h-full p-2' : ''}`}
     >
       {/* ─── Video Viewport ─── */}
       <div className="relative aspect-video w-full bg-black overflow-hidden select-none">
@@ -326,7 +328,7 @@ export default function CCTVCard({
       </div>
 
       {/* ─── Camera Control Bar Underneath Viewport ─── */}
-      <div className="p-3 bg-slate-800/90 border-t border-slate-700/50 flex flex-col gap-2">
+      <div className="p-3 bg-[var(--bg-card)] border-t border-[var(--border-color)] flex flex-col gap-2 transition-colors">
         <div className="flex items-center justify-between">
           {/* Status & Location Info */}
           <div className="flex items-center gap-2">
@@ -342,14 +344,14 @@ export default function CCTVCard({
                     : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]'
                 }`}
               />
-              <span className="text-xs font-mono font-medium text-gray-300 group-hover/toggle:text-white transition-colors">
+              <span className="text-xs font-mono font-medium text-[var(--text-secondary)] group-hover/toggle:text-[var(--text-primary)] transition-colors">
                 {isOnline ? 'ONLINE' : 'OFFLINE'}
               </span>
             </button>
 
-            <span className="text-xs text-gray-500">•</span>
+            <span className="text-xs text-[var(--text-muted)]">•</span>
 
-            <span className="text-xs text-gray-400 font-mono truncate max-w-[150px] sm:max-w-[220px]">
+            <span className="text-xs text-[var(--text-muted)] font-mono truncate max-w-[150px] sm:max-w-[220px]">
               {description || location}
             </span>
           </div>
@@ -362,8 +364,8 @@ export default function CCTVCard({
               title={motionDetected ? 'Clear Motion Alert' : 'Trigger Motion Test'}
               className={`px-2 py-1 text-[11px] font-mono rounded flex items-center gap-1 border transition-all ${
                 motionDetected
-                  ? 'bg-red-500/20 text-red-300 border-red-500/50 hover:bg-red-500/30'
-                  : 'bg-slate-700/50 text-gray-400 border-slate-600/50 hover:text-gray-200'
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/50 hover:bg-rose-500/30'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-muted)] border-[var(--border-color)] hover:text-[var(--text-primary)]'
               }`}
             >
               <Radio className="w-3 h-3" />
@@ -377,7 +379,7 @@ export default function CCTVCard({
               className={`px-2 py-1 text-[11px] font-mono rounded flex items-center gap-1 border transition-all ${
                 showConfig
                   ? 'bg-blue-600 text-white border-blue-500'
-                  : 'bg-slate-700/60 text-gray-300 border-slate-600 hover:bg-slate-700 hover:text-white'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-color)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]'
               }`}
             >
               <Sliders className="w-3 h-3" />
@@ -388,9 +390,9 @@ export default function CCTVCard({
 
         {/* ─── Expandable Preset / Custom Stream Chooser ─── */}
         {showConfig && (
-          <div className="mt-2 pt-2 border-t border-slate-700/60 flex flex-col gap-2.5 animate-in fade-in duration-150">
+          <div className="mt-2 pt-2 border-t border-[var(--border-subtle)] flex flex-col gap-2.5 animate-in fade-in duration-150">
             <div>
-              <p className="text-[11px] font-mono font-semibold text-gray-300 mb-1.5 flex items-center gap-1">
+              <p className="text-[11px] font-mono font-semibold text-[var(--text-secondary)] mb-1.5 flex items-center gap-1">
                 🌐 Switch to Live Open CCTV Cameras:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-36 overflow-y-auto custom-scrollbar pr-1">
@@ -402,12 +404,12 @@ export default function CCTVCard({
                       onClick={() => handleSelectPreset(preset)}
                       className={`text-left p-1.5 rounded text-[11px] font-mono border transition-all flex items-center justify-between gap-1 ${
                         isCurrent
-                          ? 'bg-blue-600/30 text-blue-200 border-blue-500/60 font-semibold'
-                          : 'bg-slate-800 text-gray-300 border-slate-700/70 hover:bg-slate-700/80 hover:text-white'
+                          ? 'bg-blue-600/25 text-blue-300 border-blue-500/60 font-semibold'
+                          : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-color)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]'
                       }`}
                     >
                       <div className="truncate">
-                        <span className="text-[10px] text-gray-400 block leading-tight">
+                        <span className="text-[10px] text-[var(--text-muted)] block leading-tight">
                           [{preset.room}]
                         </span>
                         <span className="truncate block">{preset.label}</span>
@@ -426,7 +428,7 @@ export default function CCTVCard({
                 placeholder="Or paste any YouTube Live / Stream URL or ID..."
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-white placeholder-gray-500 font-mono focus:outline-none focus:border-blue-500"
+                className="flex-1 bg-[var(--bg-input)] border border-[var(--border-color)] rounded px-2.5 py-1 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] font-mono focus:outline-none focus:border-blue-500"
               />
               <button
                 type="submit"
